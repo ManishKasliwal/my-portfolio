@@ -1,1 +1,48 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource/ibm-plex-mono';
+
+:root {
+	--color-bg: #09111b;
+	--color-bg-alt: #0e1824;
+	--color-surface: #112131;
+	--color-surface-strong: #132638;
+	--color-ink: #f4ede2;
+	--color-muted: #b7c2cf;
+	--color-accent: #ff6b3d;
+	--color-accent-soft: #ffc0aa;
+	--color-line: rgba(255, 255, 255, 0.1);
+	--shadow-glow: 0 24px 80px rgba(255, 107, 61, 0.16);
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	min-height: 100vh;
+	background:
+		radial-gradient(circle at top left, rgba(255, 107, 61, 0.17), transparent 28rem),
+		radial-gradient(circle at top right, rgba(77, 159, 255, 0.12), transparent 26rem),
+		linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-alt) 100%);
+	color: var(--color-ink);
+	font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+	text-rendering: optimizeLegibility;
+}
+
+body::selection {
+	background: rgba(255, 107, 61, 0.35);
+}
+
+a,
+button {
+	transition:
+		color 180ms ease,
+		background-color 180ms ease,
+		border-color 180ms ease,
+		transform 180ms ease;
+}
+
+.mono {
+	font-family: 'IBM Plex Mono', monospace;
+}

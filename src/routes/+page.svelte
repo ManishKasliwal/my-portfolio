@@ -1,16 +1,11 @@
-<svelte:head>
-	<title>Start Here | SvelteKit Tailwind Pages Template</title>
-	<meta
-		name="description"
-		content="Start from a neutral SvelteKit and Tailwind CSS template that is ready for GitHub Pages."
-	/>
-</svelte:head>
-
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { withGsapContext } from '$lib';
-
-	const commands = ['npm install', 'npm run dev', 'npm run check', 'npm run build'];
+	import ContactPanel from '$lib/components/ContactPanel.svelte';
+	import HeroSection from '$lib/components/HeroSection.svelte';
+	import ProofCard from '$lib/components/ProofCard.svelte';
+	import SectionHeading from '$lib/components/SectionHeading.svelte';
+	import ServiceCard from '$lib/components/ServiceCard.svelte';
+	import { siteContent, withGsapContext } from '$lib';
 
 	let page: HTMLElement | undefined;
 
@@ -20,137 +15,108 @@
 		}
 
 		return withGsapContext(page, (gsap) => {
-			gsap.set('.js-gsap-command', { y: 10, opacity: 0 });
+			gsap.set('[data-reveal]', { y: 28, opacity: 0 });
+			gsap.set('.js-hero-panel', { y: 32, opacity: 0 });
+			gsap.set('.js-orbit', { scale: 0.88, opacity: 0 });
 
 			gsap
 				.timeline({ defaults: { ease: 'power2.out' } })
-				.from('.js-gsap-eyebrow', { y: 22, opacity: 0, duration: 0.45 })
-				.from('.js-gsap-title', { y: 30, opacity: 0, duration: 0.7 }, '-=0.2')
-				.from('.js-gsap-copy', { y: 24, opacity: 0, duration: 0.55 }, '-=0.35')
-				.from('.js-gsap-card', { y: 28, opacity: 0, duration: 0.55, stagger: 0.12 }, '-=0.25')
-				.to(
-					'.js-gsap-command',
-					{ y: 0, opacity: 1, duration: 0.35, stagger: 0.08 },
-					'-=0.35'
-				);
+				.from('.js-nav-item', { y: -18, opacity: 0, duration: 0.35, stagger: 0.06 })
+				.from('.js-eyebrow', { y: 18, opacity: 0, duration: 0.4 }, '-=0.1')
+				.from('.js-headline', { y: 24, opacity: 0, duration: 0.7 }, '-=0.15')
+				.from('.js-intro', { y: 20, opacity: 0, duration: 0.55 }, '-=0.35')
+				.from('.js-actions', { y: 18, opacity: 0, duration: 0.45 }, '-=0.3')
+				.to('.js-hero-panel', { y: 0, opacity: 1, duration: 0.55 }, '-=0.35')
+				.to('.js-orbit', { scale: 1, opacity: 1, duration: 0.6 }, '-=0.45')
+				.to('[data-reveal]', { y: 0, opacity: 1, duration: 0.5, stagger: 0.08 }, '-=0.15');
 
-			gsap.to('.js-weather-sun, .js-weather-rays', {
+			gsap.to('.js-orbit', {
 				rotate: 360,
-				duration: 18,
+				duration: 24,
 				ease: 'none',
 				repeat: -1,
 				transformOrigin: 'center'
 			});
 
-			gsap.to('.js-weather-cloud', {
-				x: 14,
-				duration: 3.2,
-				ease: 'sine.inOut',
-				repeat: -1,
-				yoyo: true
-			});
-
-			gsap.to('.js-weather-sparkle', {
-				y: -6,
-				opacity: 0.45,
-				duration: 1.6,
-				ease: 'sine.inOut',
+			gsap.to('.js-pulse-dot', {
+				scale: 1.18,
+				opacity: 0.6,
+				duration: 1.8,
 				repeat: -1,
 				yoyo: true,
-				stagger: 0.18
+				ease: 'sine.inOut',
+				stagger: 0.15
 			});
 		});
 	});
 </script>
 
-<div bind:this={page} class="min-h-screen bg-stone-50 text-stone-900">
-	<div class="mx-auto flex max-w-5xl flex-col gap-12 px-6 py-16 sm:px-10 lg:px-12">
-		<section class="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)] lg:items-end">
-			<div class="space-y-5">
-				<p class="js-gsap-eyebrow text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">
-					SvelteKit + Tailwind + GitHub Pages
-				</p>
-				<h1 class="js-gsap-title max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-					A neutral starter template you can fork, rename, and publish without cleanup first.
-				</h1>
-				<p class="js-gsap-copy max-w-2xl text-lg leading-8 text-stone-700">
-					Replace this page with your content, keep the deployment workflow, and use the included
-					dev container and Docker helpers if they fit your setup.
-				</p>
-			</div>
+<svelte:head>
+	<title>{siteContent.seo.title}</title>
+	<meta name="description" content={siteContent.seo.description} />
+</svelte:head>
 
-			<div class="js-gsap-card rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
-				<p class="text-sm font-semibold text-stone-900">What ships in the template</p>
-				<ul class="mt-4 space-y-3 text-sm leading-6 text-stone-700">
-					<li>Static-site output with `@sveltejs/adapter-static`</li>
-					<li>Tailwind CSS 4 and Svelte 5 ready to customize</li>
-					<li>GSAP installed with a Svelte-friendly helper in `$lib`</li>
-					<li>GitHub Pages deployment with base-path handling</li>
-					<li>Optional VS Code Dev Container and local Docker scripts</li>
-				</ul>
-			</div>
-		</section>
+<div bind:this={page} class="min-h-screen">
+	<div class="mx-auto max-w-6xl px-6 py-6 sm:px-10 lg:px-12">
+		<main class="space-y-24 py-10 sm:space-y-28">
+			<HeroSection
+				profile={siteContent.profile}
+				navigation={siteContent.navigation}
+				hero={siteContent.hero}
+				stats={siteContent.stats}
+			/>
 
-		<section class="grid gap-6 md:grid-cols-2">
-			<div class="js-gsap-card rounded-3xl bg-stone-900 p-6 text-stone-100 shadow-sm">
-				<p class="text-sm font-semibold uppercase tracking-[0.18em] text-teal-300">Quick start</p>
-				<ul class="mt-4 space-y-3 font-mono text-sm">
-					{#each commands as command}
-						<li class="js-gsap-command">{command}</li>
+			<section id="services" class="space-y-10 scroll-mt-28">
+				<SectionHeading
+					eyebrow="What I do"
+					title="Advisory support built for moments where the next decision matters more than another brainstorming session."
+					intro="The site starts with a focused one-page format, so visitors can understand your value fast: what kind of problems you help solve, how you think, and why a conversation with you is worth their time."
+				/>
+
+				<div class="grid gap-5 lg:grid-cols-3">
+					{#each siteContent.services as service, index}
+						<ServiceCard {service} {index} />
 					{/each}
-				</ul>
-			</div>
-
-			<div class="js-gsap-card overflow-hidden rounded-[2rem] border border-amber-200/70 bg-linear-to-br from-amber-50 via-sky-50 to-cyan-100 p-6 shadow-sm">
-				<div class="flex items-start justify-between gap-4">
-					<div class="max-w-[18rem]">
-						<p class="text-sm font-semibold uppercase tracking-[0.18em] text-amber-700">
-							Motion-ready with GSAP
-						</p>
-						<p class="mt-3 text-sm leading-6 text-stone-700">
-							GSAP stands for GreenSock Animation Platform. It gives this site smooth,
-							sequenced JavaScript animation beyond basic CSS transitions.
-						</p>
-					</div>
-
-					<div class="relative h-28 w-32 shrink-0">
-						<div class="js-weather-sparkle absolute left-2 top-6 h-2 w-2 rounded-full bg-white/80"></div>
-						<div class="js-weather-sparkle absolute left-6 top-2 h-1.5 w-1.5 rounded-full bg-cyan-200"></div>
-						<div class="js-weather-sparkle absolute right-3 top-10 h-2 w-2 rounded-full bg-amber-200/90"></div>
-
-						<svg
-							viewBox="0 0 160 140"
-							class="absolute inset-0 h-full w-full drop-shadow-[0_14px_24px_rgba(251,191,36,0.22)]"
-							aria-hidden="true"
-						>
-							<g class="js-weather-rays">
-								{#each Array(8) as _, index}
-									<rect
-										x="77"
-										y="8"
-										width="6"
-										height="18"
-										rx="3"
-										fill="#f59e0b"
-										transform={`rotate(${index * 45} 80 58)`}
-										opacity="0.8"
-									/>
-								{/each}
-							</g>
-
-							<circle class="js-weather-sun" cx="80" cy="58" r="28" fill="#fbbf24" />
-							<circle class="js-weather-sun" cx="80" cy="58" r="18" fill="#fde68a" opacity="0.7" />
-
-							<g class="js-weather-cloud">
-								<ellipse cx="104" cy="92" rx="28" ry="16" fill="#ffffff" opacity="0.98" />
-								<circle cx="86" cy="92" r="15" fill="#ffffff" opacity="0.98" />
-								<circle cx="102" cy="82" r="18" fill="#ffffff" opacity="0.98" />
-								<circle cx="122" cy="88" r="14" fill="#ffffff" opacity="0.98" />
-							</g>
-						</svg>
-					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+
+			<section id="results" class="space-y-10 scroll-mt-28">
+				<SectionHeading
+					eyebrow="Selected results"
+					title="Proof points that sound like operator work, not abstract consulting language."
+					intro="Because we are working from partial personal details, these are written as strong placeholders. The structure is ready for real case studies, metrics, company names, or anonymized outcomes."
+				/>
+
+				<div class="grid gap-5 lg:grid-cols-3">
+					{#each siteContent.proofs as proof}
+						<ProofCard {proof} />
+					{/each}
+				</div>
+			</section>
+
+			<section id="principles" class="space-y-10 scroll-mt-28">
+				<SectionHeading
+					eyebrow="Perspective"
+					title="A little personality, anchored in how you think and how you work."
+					intro="This section gives the site a stronger point of view so it feels like your portfolio, not a sanitized business landing page."
+				/>
+
+				<div class="grid gap-5 md:grid-cols-3">
+					{#each siteContent.principles as principle}
+						<article
+							class="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6"
+							data-reveal
+						>
+							<h3 class="text-xl font-semibold tracking-[-0.03em] text-[var(--color-ink)]">
+								{principle.title}
+							</h3>
+							<p class="mt-4 text-base leading-7 text-[var(--color-muted)]">{principle.body}</p>
+						</article>
+					{/each}
+				</div>
+			</section>
+
+			<ContactPanel contact={siteContent.contact} />
+		</main>
 	</div>
 </div>

@@ -1,136 +1,59 @@
 # Technical Setup
 
-This repository is a neutral SvelteKit starter built for a simple workshop workflow. Students can create a new repository from the template, open it in VS Code, and work inside a Dev Container on Windows, macOS, or Linux.
+This project is a static SvelteKit portfolio deployed to GitHub Pages.
 
-## Stack
+## Runtime and Tooling
 
 - Node 22
-- SvelteKit
-- Svelte 5
-- `@sveltejs/adapter-static`
-- Tailwind CSS 4
-- GSAP
-- Vite
 - npm
-- VS Code Dev Containers
-- Docker Desktop or Docker Engine for local development
-- GitHub Pages deployment through GitHub Actions
+- SvelteKit 2 with `@sveltejs/adapter-static`
+- Svelte 5
+- Tailwind CSS 4
+- GSAP for selective motion
+- Vitest for unit and component testing
+- Playwright for end-to-end smoke testing
 
-## What This Template Is For
+## Site Architecture
 
-This template is designed for:
+- The homepage is a single-page portfolio experience under `/`.
+- Structured portfolio data is stored in `src/lib/content/site.ts`.
+- Reusable presentation components live in `src/lib/components`.
+- Global styles and typography are defined in `src/routes/layout.css`.
 
-- static SvelteKit websites
-- animation-heavy landing pages and microsites
-- local development in VS Code Dev Containers
-- publishing to GitHub Pages
-- beginner-friendly workshop use
+## Validation Model
 
-This template is not intended for:
+The expected quality gates are:
 
-- server-side hosting
-- long-running backend services
-- production Docker deployment
-
-## Dev Container Design
-
-The Dev Container is intended to give students a consistent development environment across operating systems.
-
-The container should:
-
-- build from the root `Dockerfile`
-- use the `dev` target
-- run as the `node` user
-- install dependencies with `npm install`
-- start the local dev server automatically
-- forward the SvelteKit development port in VS Code
-
-The Dev Container should not manually mount the host `.gitconfig` file.
-
-VS Code Dev Containers already provide built-in support for reusing local Git configuration and credentials inside the container.
-
-## GSAP Integration
-
-GSAP is installed as a regular runtime dependency so local development, CI, and GitHub Pages builds all use the same package graph.
-
-For Svelte components, this template exposes a small helper from `$lib`:
-
-```ts
-import { withGsapContext } from '$lib';
+```sh
+npm run check
+npm run test:unit
+npm run test:e2e
+npm run build
 ```
 
-The helper:
+`npm run check` validates Svelte and TypeScript.
 
-- runs only in the browser
-- respects `prefers-reduced-motion`
-- scopes selectors to the current component root
-- reverts the GSAP context automatically when the component unmounts
+`npm run test:unit` covers content-driven rendering and configuration expectations.
 
-The starter page in `src/routes/+page.svelte` demonstrates the recommended pattern, and `.vscode/gsap.code-snippets` adds a `gsap-svelte` snippet for quick authoring in VS Code.
+`npm run test:e2e` runs a browser smoke test against the portfolio homepage and key anchor-navigation flows.
 
-## Windows Host File Watching
+`npm run build` produces the static site output used by GitHub Pages.
 
-When the Dev Container runs on a Windows host, the project files live on the Windows filesystem and are bind-mounted into the Linux container. In this configuration, the Linux kernel does not receive inotify events for changes made from the Windows side, so Vite's default file watcher misses them. The dev server keeps serving stale output until it is restarted.
+## GitHub Pages
 
-Checking `process.platform` inside the container is not sufficient — it always reports `linux` regardless of the host OS.
+- Production output uses `@sveltejs/adapter-static`
+- Base-path handling is controlled through `BASE_PATH`
+- `src/routes/+layout.ts` keeps prerendering enabled with trailing slashes for static hosting compatibility
 
-To detect a Windows host, this template uses VS Code's local environment variable expansion to pass the host's `OS` environment variable into the container:
+## Dev Container and Local Preview
 
-```json
-"remoteEnv": { "HOST_OS": "${localEnv:OS}" }
-```
+The repository still supports the included VS Code Dev Container workflow.
 
-On Windows, `OS` is set to `Windows_NT` by the operating system. On macOS and Linux hosts the variable is unset, so `HOST_OS` will be empty inside the container.
+- The container builds from the project `Dockerfile`
+- It installs dependencies with npm
+- It forwards the Vite dev-server port
+- `vite.config.ts` enables polling only when needed for Windows host file watching
 
-`vite.config.ts` reads this variable and enables polling only when needed:
+## Customization Guidance
 
-```ts
-const usePolling = process.env.HOST_OS === 'Windows_NT';
-// ...
-watch: usePolling ? { usePolling: true, interval: 100 } : undefined
-```
-
-This keeps the default, efficient inotify-based watching on macOS and Linux hosts while enabling polling only for Windows users who need it.
-
-## Required Dev Container Configuration
-
-Your `.devcontainer/devcontainer.json` should follow this pattern:
-
-```json
-{
-  "name": "SvelteKit Template Dev Container",
-  "build": {
-    "dockerfile": "../Dockerfile",
-    "target": "dev"
-  },
-  "remoteUser": "node",
-  "remoteEnv": {
-    "HOST_OS": "${localEnv:OS}"
-  },
-  "updateContentCommand": "npm install",
-  "postStartCommand": "bash .devcontainer/scripts/start-dev-server.sh",
-  "postAttachCommand": "bash .devcontainer/scripts/start-dev-server.sh",
-  "waitFor": "postStartCommand",
-  "forwardPorts": [5173],
-  "portsAttributes": {
-    "5173": {
-      "label": "SvelteKit dev server",
-      "onAutoForward": "openBrowser",
-      "requireLocalPort": false
-    },
-    "5174-5190": {
-      "label": "SvelteKit dev server",
-      "onAutoForward": "openBrowser",
-      "requireLocalPort": false
-    }
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "svelte.svelte-vscode",
-        "bradlc.vscode-tailwindcss",
-        "ms-vscode-remote.remote-containers"
-      ]
-    }
-  }
-}
+To personalize the site further, start by updating the typed content model and placeholder contact details. Structural design changes can then happen at the component level without rewriting the content layer.
