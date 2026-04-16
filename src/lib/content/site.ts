@@ -70,13 +70,13 @@ export type SiteContent = {
 
 export const siteContent: SiteContent = {
 	profile: {
-		name: 'Your Name',
+		name: 'Manish Kasliwal',
 		role: 'Startup Advisor',
 		location: 'Remote, US-friendly',
 		availability: 'Selective advisory engagements'
 	},
 	seo: {
-		title: 'Your Name | Startup Advisor for Founders and Investors',
+		title: 'Manish Kasliwal | Startup Advisor for Founders and Investors',
 		description:
 			'Bold, results-driven startup advisory for founders and investors who need sharper decisions, faster execution, and stronger operating leverage.',
 		keywords: [
